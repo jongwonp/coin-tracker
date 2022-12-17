@@ -1,4 +1,3 @@
-import { time } from 'console';
 import ApexCharts from 'react-apexcharts';
 import { useQuery } from 'react-query';
 import { fetchCoinHistory } from '../api';
@@ -23,20 +22,25 @@ function Chart({ coinId }: ChartProps) {
     ['ohlcv', coinId],
     () => fetchCoinHistory(coinId),
     {
-      refetchInterval: 10000,
+      refetchInterval: 60000,
     }
   );
+  console.log(data);
+
   return (
     <div>
       {isLoading ? (
         'Loading chart...'
-      ) : (
+      ) : Array.isArray(data) ? (
         <ApexCharts
-          type="line"
+          type="candlestick"
           series={[
             {
               name: 'price',
-              data: data?.map((price) => Number(price.close)) as number[],
+              data: data?.map((price) => ({
+                x: new Date(price.time_close * 1000),
+                y: [price.open, price.high, price.low, price.close],
+              })) as { x: any; y: any }[],
             },
           ]}
           options={{
@@ -54,32 +58,13 @@ function Chart({ coinId }: ChartProps) {
             grid: {
               show: false,
             },
-            stroke: {
-              curve: 'smooth',
-              width: 4,
-            },
-            yaxis: {
-              show: false,
-            },
             xaxis: {
               type: 'datetime',
-              labels: { show: false },
-              categories: data?.map((price) =>
-                new Date(price.time_close * 1000).toISOString()
-              ),
-            },
-            fill: {
-              type: 'gradient',
-              gradient: { gradientToColors: ['#0be881'], stops: [0, 100] },
-            },
-            colors: ['#0fbcf9'],
-            tooltip: {
-              y: {
-                formatter: (value) => `$${value.toFixed(3)}`,
-              },
             },
           }}
         />
+      ) : (
+        'Data not found'
       )}
     </div>
   );

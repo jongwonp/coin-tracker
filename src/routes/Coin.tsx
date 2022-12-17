@@ -12,6 +12,8 @@ import styled from 'styled-components';
 import { fetchCoinInfo, fetchCoinTickers } from '../api';
 import Chart from './Chart';
 import Price from './Price';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse } from '@fortawesome/free-solid-svg-icons';
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -22,7 +24,7 @@ const Container = styled.div`
 const Header = styled.header`
   height: 10vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 `;
 
@@ -169,9 +171,13 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
+        <Link to="/">
+          <FontAwesomeIcon icon={faHouse} />
+        </Link>
         <Title>
           {state?.name ? state.name : loading ? 'Loading...' : infoData?.name}
         </Title>
+        <div></div>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
